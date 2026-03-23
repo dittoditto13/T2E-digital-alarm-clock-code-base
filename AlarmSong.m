@@ -1,5 +1,5 @@
-comThree = arduino('COM6','Uno')
-SongNum=randi([1,8])
+comThree = arduino('COM6','Uno');
+SongNum=randi([1,8]);
 CEight = 4186;
 BSeven = 3951.1;
 ASevenSrp = 3729.3;
@@ -276,56 +276,44 @@ AlarmSongPiano = [Rest,Half; FFour,Quarter; GFour,Half; GFour,Quarter; GFour,Hal
     EFour,Quarter; FFour,Quarter; EFour,Quarter; CFour,Quarter; CFour,DottedHalf];
 if SongNum == 1
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongMega)
-                playTone(comThree,'D3',AlarmSongMega(idx,1),AlarmSongMega(idx,2))
-                pause(AlarmSongMega(idx,2))
-            end
+        for idx = 1 : length(AlarmSongMega)
+            playTone(comThree,'D3',AlarmSongMega(idx,1),AlarmSongMega(idx,2))
+            pause(AlarmSongMega(idx,2))
         end
     end
 elseif SongNum == 2 
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongCommrad)
-                playTone(comThree,'D3',AlarmSongCommrad(idx,1),AlarmSongCommrad(idx,2))
-                pause(AlarmSongCommrad(idx,2))
-            end
+        for idx = 1 : length(AlarmSongCommrad)
+            playTone(comThree,'D3',AlarmSongCommrad(idx,1),AlarmSongCommrad(idx,2))
+            pause(AlarmSongCommrad(idx,2))
         end
     end
 elseif SongNum == 3
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongCallMe)
-                playTone(comThree,'D3',AlarmSongCallMe(idx,1),AlarmSongCallMe(idx,2))
-                pause(AlarmSongCallMe(idx,2))
-            end
+        for idx = 1 : length(AlarmSongCallMe)
+            playTone(comThree,'D3',AlarmSongCallMe(idx,1),AlarmSongCallMe(idx,2))
+            pause(AlarmSongCallMe(idx,2))
         end
     end
 elseif SongNum ==4
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongPuppet)
-                playTone(comThree,'D3',AlarmSongPuppet(idx,1),AlarmSongPuppet(idx,2))
-                pause(AlarmSongPuppet(idx,2))
-            end
+        for idx = 1 : length(AlarmSongPuppet)
+            playTone(comThree,'D3',AlarmSongPuppet(idx,1),AlarmSongPuppet(idx,2))
+            pause(AlarmSongPuppet(idx,2))
         end
     end
 elseif SongNum ==5
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongSilhouette)
-                playTone(comThree,'D3',AlarmSongSilhouette(idx,1),AlarmSongSilhouette(idx,2))
-                pause(AlarmSongSilhouette(idx,2))
-            end
+        for idx = 1 : length(AlarmSongSilhouette)
+            playTone(comThree,'D3',AlarmSongSilhouette(idx,1),AlarmSongSilhouette(idx,2))
+            pause(AlarmSongSilhouette(idx,2))
         end
     end
 elseif SongNum == 6 
     while 1==1
-        while 1==1
-            for idx = 1 : length(AlarmSongBrightSide)
-                playTone(comThree,'D3',AlarmSongBrightSide(idx,1),AlarmSongBrightSide(idx,2))
-                pause(AlarmSongBrightSide(idx,2))
-            end
+        for idx = 1 : length(AlarmSongBrightSide)
+            playTone(comThree,'D3',AlarmSongBrightSide(idx,1),AlarmSongBrightSide(idx,2))
+            pause(AlarmSongBrightSide(idx,2))
         end
     end
 elseif SongNum==7
