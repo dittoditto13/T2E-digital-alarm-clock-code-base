@@ -3,17 +3,14 @@
 Tyler Kramer, Sean Nichols, Alex Taylor
 T2E alarm clock. Will display random code that needs to be entered to turn off alarm
 %}
-if exist('a', 'var') ~= 1
-    a = arduino('COM4', 'Uno');
+if exist('s', 'var') ~= 1 %only connects arduinos if they are not in the workspace
+    s = serialport("COM4", 9600);
 end
 if exist('comTwo', 'var') ~= 1
     comTwo = arduino('COM3', 'Uno');
 end
-PinTwo = 'D2';   PinThree = 'D3';  PinFour = 'D4';   PinFive = 'D5';
-PinSix = 'D6';   PinSeven = 'D7';  PinEight = 'D8';  PinNine = 'D9';
-PinTen = 'D10';  PinEleven = 'D11'; PinTwelve = 'D12'; PinThirteen = 'D13';
-segmentPins = {PinTwo, PinThree, PinFour, PinFive, PinSix, PinSeven, PinEight, PinNine};
-selectPins  = {PinThirteen, PinTwelve, PinEleven, PinTen};
+%Initialize all needed keypad parts and values:
+NumStr = ' ';
 ClearCount = 0;
 ClearedDig = 0;
 rowPins = {'D9', 'D8', 'D7', 'D6'};
@@ -36,7 +33,6 @@ Alarm = zeros([1,4]);
 TestPassword = zeros([1,4]);
 confirmed = false;
 while ~confirmed
-    % --- Re-enter alarm digits ---
     disp('Enter alarm hour first digit:')
     while true
         [NumInt, keyPressed] = ScanKeypad(comTwo, rowPins, colPins, keys);
@@ -52,7 +48,6 @@ while ~confirmed
         end
     end
     AlarmHoursStr = AlarmHoursOne * 10 + AlarmHoursTwo;
-
     disp('Enter alarm minutes first digit:')
     while true
         [NumInt, keyPressed] = ScanKeypad(comTwo, rowPins, colPins, keys);
@@ -70,15 +65,8 @@ while ~confirmed
     AlarmMinutesStr = AlarmMinutesOne * 10 + AlarmMinutesTwo;
 
     % --- Display entered time ---
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, AlarmHoursOne,   DigOne);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, AlarmHoursTwo,   DigTwo);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, AlarmMinutesOne, DigThree);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, AlarmMinutesTwo, DigFour);
-
+    AlarmConfirmMSG = sprintf("%d,%d,%d,%d",AlarmHoursOne,AlarmHoursTwo,AlarmMinutesOne,AlarmMinutes);
+    writeline(s,AlarmConfirmMSG);
     % --- Confirm or re-enter ---
     disp('Press * to confirm or # to re-enter:')
     while true
@@ -99,6 +87,8 @@ while ~confirmed
         if NumStr == '*' || NumStr == '#'; break; end
     end
 end
+writeline(s,"11,11,11,11");
+NumStr = ' ';
 ampmConfirmed = false;
 while ~ampmConfirmed
     disp('Press A for AM, B for PM:')
@@ -120,20 +110,17 @@ while ~ampmConfirmed
         end
         if exist('AlarmTimeSetting', 'var'); break; end
     end
-
     % --- Flash display to show AM (digits 1-2 lit) or PM (digits 3-4 lit) ---
-    ClockNumClear(a, selectPins, segmentPins)
+    writeline(s,"11,11,11,11");
     if AlarmTimeSetting == 1
         disp('Selected: AM')
-        % Show "A" indicator: flash first two digits with dashes, blank last two
-        ClockNumDisplay(a, selectPins, segmentPins, 12, DigOne);   % 11 = dash/blank sentinel
+        TimeSettingConfirmMSG = sprintf("%d,%d,%d,%d",12,11,AlarmHoursOne,AlarmHoursTwo);
+        writeline(s,TimeSettingConfirmMSG);
     else
         disp('Selected: PM')
-        % Show "P" indicator: blank first two, flash last two
-        ClockNumDisplay(a, selectPins, segmentPins, 13, DigOne);
+        TimeSettingConfirmMSG = sprintf("%d,%d,%d,%d",13,11,AlarmHoursOne,AlarmHoursTwo);
+        writeline(s,TimeSettingConfirmMSG);
     end
-    pause(1.0)
-    ClockNumClear(a, selectPins, segmentPins)
     % --- Confirm or re-select ---
     disp('Press * to confirm or # to re-select AM/PM:')
     while true
@@ -154,6 +141,8 @@ while ~ampmConfirmed
         if NumStr == '*' || NumStr == '#'; break; end
     end
 end
+writeline(s,"11,11,11,11");
+NumStr = ' ';
 tempConfirmed = false;
 while ~tempConfirmed
     disp('Enter difficulty first digit (0-9):')
@@ -173,14 +162,8 @@ while ~tempConfirmed
     temp = (TempDigOne * 10 + TempDigTwo) / 100;
     disp(temp)
     % Display "0.XX_" across all 4 digits
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, 0,  DigOne);    % "0"
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, 11, DigTwo);    % "."
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, TempDigOne, DigThree);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, TempDigTwo, DigFour);
+    TempConfirmMSG = sprintf("%d,%d,%d,%d",11,0,TempDigOne,TempDigTwo);
+    writeline(s,TempConfirmMSG);
     disp('Press * to confirm or # to re-enter difficulty:')
     while true
         for r = 1:4
@@ -200,6 +183,7 @@ while ~tempConfirmed
         if NumStr == '*' || NumStr == '#'; break; end
     end
 end
+writeline(s,"11,11,11,11");
 Sleven = 0;
 if AlarmHoursStr > 9
     AlarmHoursMrx = num2str(AlarmHoursStr) - '0';
@@ -242,7 +226,12 @@ while 1 == 1
     end
     seconds = c(6);
     time = [DigitOne, DigitTwo, DigitThree, DigitFour];
-
+    if trigered == 1 && breaking == 1
+        if ~(Alarm(1)==time(1) && Alarm(2)==time(2) && Alarm(3)==time(3) && Alarm(4)==time(4) && AlarmTimeSetting==ClockTimeSetting)
+            trigered = 0;
+            breaking = 0;
+        end
+    end
     % Pre-alarm song trigger (~15s early)
     if Alarm(1)==time(1) && Alarm(2)==time(2) && (Alarm(3)==time(3) || PreminuteTwo==time(3)) && preminuteAl==time(4) ...
             && AlarmTimeSetting==ClockTimeSetting && seconds>29 && trigered==0
@@ -256,14 +245,8 @@ while 1 == 1
         trigered = 1;
     end
     % Display current clock time
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, DigitOne, DigOne);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, DigitTwo, DigTwo);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, DigitThree, DigThree);
-    ClockNumClear(a, selectPins, segmentPins)
-    ClockNumDisplay(a, selectPins, segmentPins, DigitFour, DigFour);
+    ClockTimeMSG = sprintf("%d,%d,%d,%d",DitgitOne,DigitTwo,DigitThree,DigitFour);
+    writeline(s,ClockTimeMSG);
     % Alarm trigger
     if trigered == 1
         if Alarm(1)==time(1) && Alarm(2)==time(2) && Alarm(3)==time(3) && Alarm(4)==time(4) && AlarmTimeSetting==ClockTimeSetting
@@ -282,14 +265,8 @@ while 1 == 1
                 % Show alarm code on display (4 cycles)
                 for q = 1:4
                     if Sleven == 1; break; end
-                    ClockNumClear(a, selectPins, segmentPins)
-                    ClockNumDisplay(a, selectPins, segmentPins, AlarmDigOne, DigOne);
-                    ClockNumClear(a, selectPins, segmentPins)
-                    ClockNumDisplay(a, selectPins, segmentPins, AlarmDigTwo, DigTwo);
-                    ClockNumClear(a, selectPins, segmentPins)
-                    ClockNumDisplay(a, selectPins, segmentPins, AlarmDigThree, DigThree);
-                    ClockNumClear(a, selectPins, segmentPins)
-                    ClockNumDisplay(a, selectPins, segmentPins, AlarmDigFour, DigFour);
+                    AlarmTimeMSG = sprintf("%d,%d,%d,%d",AlarmDigOne,AlarmDigTwo,AlarmDigThree,AlarmDigFour);
+                    writeline(s,ClockTimeMSG);
                 end
 
                 PinEnterStartTime = tic;
@@ -300,7 +277,6 @@ while 1 == 1
                             disp("Correct!")
                             system('start C:\Users\tyler\OneDrive\Desktop\KillAlarmSong.bat')
                             EndTime = toc(StartTime);
-                            disp(EndTime)
                             trigered = 0;
                             breaking = 1;
                             break
@@ -313,12 +289,11 @@ while 1 == 1
 
                     Sleven = 1;
                     if Sleven == 1
-                        ClockNumDisplay(a, selectPins, segmentPins, 10, DigitPins{1});
+                        writeline(s,"10,11,11,11")
                         if i > 1
-                            PasswordDispCheck(a, i, TestPassword, selectPins, segmentPins, DigitPins)
+                            PasswordDispCheck(s, i, TestPassword)
                         end
                     end
-
                     % --- Keypad scan via ScanKeypad ---
                     [NumInt, keyPressed] = ScanKeypad(comTwo, rowPins, colPins, keys);
                     if keyPressed
@@ -342,8 +317,6 @@ while 1 == 1
                             TestPassword(z) = NumInt;
                             z = z + 1; i = i + 1; y = y + 1;
                             Sleven = 0;
-                            disp(TestPassword)
-                            disp(z); disp(i)
                             pause(0.03)
                         end
                     end
@@ -352,14 +325,9 @@ while 1 == 1
                     PinEnterEndTime = toc(PinEnterStartTime);
                     if PinEnterEndTime > 20
                         PinEnterStartTime = tic;
-                        ClockNumClear(a, selectPins, segmentPins)
-                        ClockNumDisplay(a, selectPins, segmentPins, AlarmDigOne, DigOne);
-                        ClockNumClear(a, selectPins, segmentPins)
-                        ClockNumDisplay(a, selectPins, segmentPins, AlarmDigTwo, DigTwo);
-                        ClockNumClear(a, selectPins, segmentPins)
-                        ClockNumDisplay(a, selectPins, segmentPins, AlarmDigThree, DigThree);
-                        ClockNumClear(a, selectPins, segmentPins)
-                        ClockNumDisplay(a, selectPins, segmentPins, AlarmDigFour, DigFour);
+                        writeline(s, "11,11,11,11");
+                        OverTimeMSG = sprintf("%d,%d,%d,%d",AlarmDigOne,AlarmDigTwo,AlarmDigThree,AlarmDigFour);
+                        writeline(s, OverTimeMSG);
                     end
                 end
 
