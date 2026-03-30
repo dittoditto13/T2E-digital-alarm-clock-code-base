@@ -1,13 +1,10 @@
-function PasswordDispCheck(system, i, TestPassword, selectPins, segmentPins, digitPins)
+function PasswordDispCheck(system, i, TestPassword)
     % digitPins is a cell array: {DigOne, DigTwo, DigThree}
-
+    DigitDisplay = [11,11,11,11];
     for d = 1:(i-1)
-        ClockNumDisplay(system, selectPins, segmentPins, TestPassword(d), digitPins{d});
-        ClockNumClear(system, selectPins, segmentPins);
+        DigitDisplay(d)=TestPassword(d);
     end
-    disp(d)
-    % Always end with underscore on digit 1
-    ClockNumDisplay(system, selectPins, segmentPins, 10, digitPins{d+1});
-    ClockNumClear(system, selectPins, segmentPins);
-    disp("__")
+    DigitDisplay(i)=10;
+    PasswordDispMSG = sprintf("%d,%d,%d,%d",DigitDisplay(1),DigitDisplay(2),DigitDisplay(3),DigitDisplay(4));
+    writeline(system,PasswordDispMSG)
 end
