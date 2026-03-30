@@ -171,7 +171,6 @@ function [AlarmDigOne, AlarmDigTwo, AlarmDigThree, AlarmDigFour] = PasswordAlgor
     algStds = zeros(size(tempValues));
     randomMeans = zeros(size(tempValues));
     randomStds = zeros(size(tempValues));
-
     % Random baseline (temp-independent)
     randomSamples = flatScores(randi(numel(flatScores), numTrials, 1));
     randomMean = mean(randomSamples);
@@ -247,6 +246,7 @@ function [AlarmDigOne, AlarmDigTwo, AlarmDigThree, AlarmDigFour] = PasswordAlgor
                 'Color', textColor);
         end
     end
+
     xlabel('Second Digit');
     ylabel('First Digit');
     title('Bigram N-gram Weights (First Digit \rightarrow Second Digit)');
