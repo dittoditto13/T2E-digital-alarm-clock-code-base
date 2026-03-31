@@ -32,6 +32,29 @@ breaking = 0;
 Alarm = zeros([1,4]);
 TestPassword = zeros([1,4]);
 confirmed = false;
+if exist('alarm','var') = 1
+    AlarmConfirmMSG = sprintf("%d,%d,%d,%d",AlarmHoursOne,AlarmHoursTwo,AlarmMinutesOne,AlarmMinutes);
+    writeline(s,AlarmConfirmMSG);
+    % --- Confirm or re-enter ---
+    disp('Press * to confirm or # to change alarm:')
+    while true
+        for r = 1:4
+            writeDigitalPin(comTwo, rowPins{r}, 0);
+            for c = 1:4
+                if readDigitalPin(comTwo, colPins{c}) == 0
+                    NumStr = keys(r,c);
+                    if NumStr == '*'
+                        confirmed = true;  pause(0.2);
+                    elseif NumStr == '#'
+                        confirmed = false; pause(0.2);
+                    end
+                end
+            end
+            writeDigitalPin(comTwo, rowPins{r}, 1);
+        end
+        if NumStr == '*' || NumStr == '#'; break; end
+    end
+end
 while ~confirmed
     disp('Enter alarm hour first digit:')
     while true
@@ -208,6 +231,7 @@ else
     preminuteAl = Alarm(4) - 1;
 end
 trigered = 0;
+writematrix(Alarm,'C:\Users\snich\OneDrive\Coding\alarm.txt');
 while 1 == 1
     c = clock;
     if c(4) > 11; ClockTimeSetting = 2; else; ClockTimeSetting = 1; end
