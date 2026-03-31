@@ -88,7 +88,7 @@ while ~confirmed
     AlarmMinutesStr = AlarmMinutesOne * 10 + AlarmMinutesTwo;
 
     % --- Display entered time ---
-    AlarmConfirmMSG = sprintf("%d,%d,%d,%d",AlarmHoursOne,AlarmHoursTwo,AlarmMinutesOne,AlarmMinutes);
+    AlarmConfirmMSG = sprintf("%d,%d,%d,%d",AlarmHoursOne,AlarmHoursTwo,AlarmMinutesOne,AlarmMinutesTwo);
     writeline(s,AlarmConfirmMSG);
     % --- Confirm or re-enter ---
     disp('Press * to confirm or # to re-enter:')
