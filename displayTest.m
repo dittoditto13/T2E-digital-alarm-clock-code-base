@@ -269,7 +269,7 @@ while 1 == 1
         trigered = 1;
     end
     % Display current clock time
-    ClockTimeMSG = sprintf("%d,%d,%d,%d",DitgitOne,DigitTwo,DigitThree,DigitFour);
+    ClockTimeMSG = sprintf("%d,%d,%d,%d",DigitOne,DigitTwo,DigitThree,DigitFour);
     writeline(s,ClockTimeMSG);
     % Alarm trigger
     if trigered == 1
